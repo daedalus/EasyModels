@@ -5,22 +5,21 @@ from terminaltables import AsciiTable
 from .constants import *
 from webbrowser import open_new_tab
 from crayons import *
-test = r.get(API_URL + 'categories/', headers=HEADERS)
+test = r.get(f'{API_URL}categories/', headers=HEADERS)
 
 
 class Categories:
     
     @staticmethod
     def get_all_categories():
-        res = r.get(API_URL + 'categories/', headers=HEADERS)
+        res = r.get(f'{API_URL}categories/', headers=HEADERS)
         return res.json()
     
     @staticmethod
     def get_category_info(category):
-        res0 = r.get(API_URL + 'categories/{}/0/'.format(category), headers=HEADERS).json()
-        res1 = r.get(API_URL + 'categories/{}/50/'.format(category), headers=HEADERS).json()
-        full_dict = dict(res0, **res1)
-        return full_dict
+        res0 = r.get(f'{API_URL}categories/{category}/0/', headers=HEADERS).json()
+        res1 = r.get(f'{API_URL}categories/{category}/50/', headers=HEADERS).json()
+        return dict(res0, **res1)
     
     @staticmethod
     def categories_to_table(colors):
@@ -28,20 +27,23 @@ class Categories:
         table_data = [
             ['ID#', 'Title', 'Description']
         ]
-        count = 0
-        for k, v in categories.items():
+        for count, v in enumerate(categories.values()):
             if colors == True:
-                table_data.append([str(blue(str(count), bold=True)), str(green(str(v['title']), bold=True)), str(white(str(v['description'][0:100]), bold=True))])
+                table_data.append(
+                    [
+                        str(blue(str(count), bold=True)),
+                        str(green(str(v['title']), bold=True)),
+                        str(white(str(v['description'][:100]), bold=True)),
+                    ]
+                )
             else:
-                table_data.append([count, v['title'], v['description'][0:100]])
-            count += 1
+                table_data.append([count, v['title'], v['description'][:100]])
         table = AsciiTable(table_data, 'Categories')
         return table.table
     
     @staticmethod
     def get_github_link_from_category(category_info, choice):
-        link = category_info['models'][choice].get('link')
-        if link:
+        if link := category_info['models'][choice].get('link'):
             open_new_tab(link)
         else:
             print('\nNo Link Available!\n')
@@ -54,12 +56,12 @@ class Categories:
         frameworks = []
         for model in tqdm(category_info['models']):
             if model.get('title'):
-                titles.append(model['title'][0:60])
+                titles.append(model['title'][:60])
             else:
                 titles.append('null')
             if model.get('description'):
-                description = model['description'][0:30].replace('<p>', '')
-                descriptions.append(description + ('...' if not '</p>' in description else ''))
+                description = model['description'][:30].replace('<p>', '')
+                descriptions.append(description + ('...' if '</p>' not in description else ''))
             else:
                 descriptions.append('null')
             if model.get('link'):

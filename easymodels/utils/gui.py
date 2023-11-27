@@ -6,16 +6,15 @@ from webbrowser import open_new_tab
 
 class GUI:
     
-    def category_to_layout(category_info):
+    def category_to_layout(self):
         titles = []
         links = []
         frameworks = []
         col1 = []
         col2 = []
-        count = 0
-        for model in category_info['models']:
+        for model in self['models']:
             if model.get('title'):
-                titles.append(model['title'][0:60])
+                titles.append(model['title'][:60])
             else:
                 titles.append('null')
             if model.get('link'):
@@ -26,21 +25,30 @@ class GUI:
                 frameworks.append(model['framework'])
             else:
                 frameworks.append('null')
-        for x in range(len(titles)):
+        for count, x in enumerate(range(len(titles))):
             if (count % 2) != 0:
-                col1.append([g.Button(titles[x] + ' | ' + frameworks[x], key='https://github.com/' + links[x])])
+                col1.append(
+                    [
+                        g.Button(
+                            f'{titles[x]} | {frameworks[x]}',
+                            key=f'https://github.com/{links[x]}',
+                        )
+                    ]
+                )
             else:
-                col2.append([g.Button(titles[x] + ' | ' + frameworks[x], key='https://github.com/' + links[x])])
-            count += 1
-        
+                col2.append(
+                    [
+                        g.Button(
+                            f'{titles[x]} | {frameworks[x]}',
+                            key=f'https://github.com/{links[x]}',
+                        )
+                    ]
+                )
         return col1, col2
     
-    def gui(dark=False):
-        if 'win' in sys.platform:
-            titlebar = True
-        else:
-            titlebar = False
-        if dark:
+    def gui(self):
+        titlebar = 'win' in sys.platform
+        if self:
             background_color="#262626"
             input_elements_background_color="#262626"
             button_color=('white', '#171717')
@@ -62,7 +70,6 @@ class GUI:
             [g.T('Please pick a category from below:')]
         ]
         cat_json = Categories.get_all_categories()
-        titles = []
         cat_to_id = {
             'Computer Vision': 'computer-vision',
             'Natural Language Processing': 'natural-language-processing',
@@ -71,10 +78,10 @@ class GUI:
             'Unsupervised Learning': 'unsupervised-learning',
             'Audio and Speech': 'audio-speech'
         }
-        for k, v in cat_json.items():
-            titles.append([v['title']])
-        for title in titles:
-            layout.append([g.Button(str(title[0]), key=cat_to_id[title[0]])])
+        titles = [[v['title']] for k, v in cat_json.items()]
+        layout.extend(
+            [g.Button(str(title[0]), key=cat_to_id[title[0]])] for title in titles
+        )
         layout.append([g.Cancel('Close')])
 
         window = g.Window('EasyModels', layout=layout, keep_on_top=True, grab_anywhere=True, no_titlebar=titlebar)

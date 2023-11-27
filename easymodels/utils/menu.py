@@ -43,12 +43,7 @@ class Menu:
             if category_id.lower() == 'exit':
                 sys.exit()
             else:
-                if not cat_to_id.get(category_id):
-                    if colors == True:
-                        print(red('\nInvalid Option! Please choose an ID # from the table above!\n', bold=True))
-                    else:
-                        print('\nInvalid Option! Please choose an ID # from the table above!\n')
-                else:
+                if cat_to_id.get(category_id):
                     if colors == True:
                         print(green('\nGrabbing Models Based On Choice...\n',bold=True))
                         category_info = Categories.get_category_info(cat_to_id[category_id])
@@ -60,22 +55,26 @@ class Menu:
                         print(Categories.create_table_from_category_info(category_info, colors))
                         print('\nPlease Choose A Project by ID # From Above To Find Models or Type "exit" to Exit the Program\n')
                     while True:
-                        if colors == True:
-                            model_id = input(green('$easymodels~ ', bold=True))
-                        else:
-                            model_id = input('$easymodels~ ')
+                        model_id = (
+                            input(green('$easymodels~ ', bold=True))
+                            if colors == True
+                            else input('$easymodels~ ')
+                        )
                         if model_id.lower() == "exit":
                             break
-                        else:
-                            try:
-                                new_id = int(model_id)
-                                Categories.get_github_link_from_category(category_info, new_id)
-                                break
-                            except:
-                                print(Categories.create_table_from_category_info(category_info))
-                                if colors == True:
-                                    print(red('\nInvalid Option! Please choose an ID # from the table above!\n', bold=True))
-                                else:
-                                    print('\nInvalid Option! Please choose an ID # from the table above!\n')
+                        try:
+                            new_id = int(model_id)
+                            Categories.get_github_link_from_category(category_info, new_id)
+                            break
+                        except:
+                            print(Categories.create_table_from_category_info(category_info))
+                            if colors == True:
+                                print(red('\nInvalid Option! Please choose an ID # from the table above!\n', bold=True))
+                            else:
+                                print('\nInvalid Option! Please choose an ID # from the table above!\n')
+                elif colors == True:
+                    print(red('\nInvalid Option! Please choose an ID # from the table above!\n', bold=True))
+                else:
+                    print('\nInvalid Option! Please choose an ID # from the table above!\n')
                 sys.stdout.flush()
     

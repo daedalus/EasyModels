@@ -44,21 +44,17 @@ def start():
                 else:
                     print('Update Available Please Run "pip install easymodels --upgrade --no-cache-dir" to update to the latest version!')
                 time.sleep(1)
+            elif args.disable_colors == False:
+                print(green('All Up To Date! Starting EasyModels', bold=True))
             else:
-                if args.disable_colors == False:
-                    print(green('All Up To Date! Starting EasyModels', bold=True))
-                else:
-                    print('All Up To Date! Starting EasyModels')
+                print('All Up To Date! Starting EasyModels')
         if args.gui:
             GUI.gui(dark=dark)
         if args.disable_colors:
             print('Starting EasyModels...')
         else:
             print(green('Starting EasyModels...', bold=True))
-        if args.disable_colors:
-            colors = False
-        else:
-            colors = True
+        colors = not args.disable_colors
         Menu.main(colors)
     except KeyboardInterrupt:
         print('Exiting..')
